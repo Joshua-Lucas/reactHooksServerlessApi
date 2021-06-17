@@ -1,7 +1,7 @@
 {
   "name": "reacthooksexample",
   "version": "1.0.0",
-  "description": "Serverless webpack example using ecma script",
+  "description": "Serverless REST app to use for examples.",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -13,13 +13,14 @@
     "babel-polyfill": "^6.23.0",
     "babel-preset-env": "^1.6.0",
     "serverless-http": "^2.7.0",
+    "serverless-offline": "^7.0.0",
     "serverless-webpack": "^5.3.1",
     "webpack": "^4.35.2"
   },
-  "author": "The serverless webpack authors (https://github.com/elastic-coders/serverless-webpack)",
+  "author": "Joshua Lucas",
   "license": "MIT",
   "dependencies": {
-    "aws-sdk": "^2.915.0",
+    "aws-sdk": "^2.928.0",
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "http-status-codes": "^2.1.4"
