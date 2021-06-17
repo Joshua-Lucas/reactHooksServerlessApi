@@ -5,8 +5,6 @@ const router = Router();
 
 router.route("/").get(courseController.index);
 
-router.route("/:searchTerm").get(courseController.showMany);
-
-router.route("/course/:id").get(courseController.show);
+router.route("/:term").get(courseController.showMany);
 
 export default router;
