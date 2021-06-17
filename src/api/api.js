@@ -1,15 +1,12 @@
 import express from "express";
 import cors from "cors";
 import serverless from "serverless-http";
+import router from "./apiRouter";
 
 const app = express();
+app.disable("x-powered-by");
+app.app.use(cors());
 
-app.use(cors());
-
-app.get("/", function (req, res) {
-  res.json({
-    message: "ok",
-  });
-});
+app.use("/", router);
 
 export const handler = serverless(app);
