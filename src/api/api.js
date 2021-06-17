@@ -4,8 +4,10 @@ import serverless from "serverless-http";
 import router from "./apiRouter";
 
 const app = express();
+
 app.disable("x-powered-by");
-app.app.use(cors());
+
+app.use(cors());
 
 app.use("/", router);
 
