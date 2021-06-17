@@ -1,52 +1,62 @@
-import { getCourses, getSearchedCourses, getOneCourse } from "./courseModel";
-//  build logger for issues
-import HttpStatus from "http-status-codes";
+import { StatusCodes, getReasonPhrase } from "http-status-codes";
+import AWS from "aws-sdk";
 
-export async function getAll() {
+const COURSE_TABLE = "course-table-dev";
+const dynamoDb = new AWS.DynamoDB({ apiVersion: "2012-08-10" });
+
+export async function getAll(req, res) {
   try {
-    const result = await getCourses(req, res);
-    res.status(HttpStatus.OK).json(result);
+    const params = {
+      TableName: COURSE_TABLE,
+    };
+
+    dynamoDb.scan(params, function (error, data) {
+      if (error) {
+        console.error(error);
+      } else {
+        res.status(StatusCodes.OK).json(data.Items);
+      }
+    });
   } catch (error) {
     //   run logging function
     console.error(error);
-    res.sendStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
+      error: getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR),
+    });
   }
 }
 
-export async function getAllThatMatch(res, req) {
-  const searchTerm = req.params.searchTerm;
+export async function getAllThatContain(req, res) {
+  var search = req.params.term;
   try {
-    const result = await getSearchedCourses(title);
-    if (result == 0) {
-      res.status(HttpStatus.NOT_FOUND).send("No Course with That Title");
-    } else {
-      res.status(HttpStatus.OK).json(result);
-    }
-  } catch (error) {
-    //   run logging function
-    console.error(error);
-    res.sendStatus(HttpStatus.INTERNAL_SERVER_ERROR);
-  }
-}
+    const params = {
+      TableName: COURSE_TABLE,
+      FilterExpression: "contains(title, :t)",
+      ExpressionAttributeValues: {
+        ":t": {
+          S: search,
+        },
+      },
+    };
 
-export async function showOne(res, req) {
-  const courseId = req.params.id;
-  try {
-    const result = await getOneCourse(courseId);
-    if (result === 0) {
-      res.status(HttpStatus.NOT_FOUND).send("Course Does Not Exist");
-    } else {
-      res.status(HttpStatus.OK).json(result.rows[0]);
-    }
+    dynamoDb.scan(params, function (error, data) {
+      console.log(params);
+      if (error) {
+        console.error(error);
+      } else {
+        res.status(StatusCodes.OK).json(data.Items);
+      }
+    });
   } catch (error) {
     //   run logging function
     console.error(error);
-    res.sendStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
+      error: getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR),
+    });
   }
 }
 
 export const courseController = {
   index: getAll,
-  showMany: getAllThatMatch,
-  show: showOne,
+  showMany: getAllThatContain,
 };
